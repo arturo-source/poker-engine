@@ -91,6 +91,34 @@ func (c Card) QuitCards(cardsToQuit Card) Card {
 	return c &^ cardsToQuit
 }
 
+// ReduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, Full house) and you want the exact number of ones
+func (c Card) ReduceRepeatedNumber(onesToLeft int) Card {
+	mask := ALL_CARDS
+
+	for c.Ones() > onesToLeft {
+		mask >>= 13
+		c &= mask
+	}
+
+	return c
+}
+
+// ReduceToOneSuit is usefull when you only want one suit and you want the exact number of ones
+func (c Card) ReduceToOneSuit(onesToLeft int) Card {
+	mask := ONE_SUIT
+
+	for i := 0; i < 4; i++ {
+		result := c & mask
+		if result.Ones() == onesToLeft {
+			return result
+		}
+
+		mask <<= 13
+	}
+
+	return NO_CARD
+}
+
 func JoinCards(cards ...Card) Card {
 	var c Card
 	for _, card := range cards {
@@ -151,20 +179,20 @@ func Straight(cards Card) (winningCards Card, found bool) {
 		return winningCardsOneSuited.Ones() >= 5
 	}
 
-	// to ace Straight -> to six Straight
-	const end Card = 0b11111
-	const start Card = end << 8
-	for mask := start; mask >= end; mask >>= 1 {
+	// Straight to ace -> Straight to six
+	const strToSix Card = 0b11111
+	const strToAce Card = strToSix << 8
+	for mask := strToAce; mask >= strToSix; mask >>= 1 {
 		if maskMakesStraight(mask) {
 			winningCards = cards.OneSuitToAllSuits(mask)
 			return winningCards, true
 		}
 	}
 
-	// to five Straight
-	const maskHighCardFive = ONE_SUIT & (FIVES | FOURS | THREES | TWOS | ACES)
-	winningCards = cards.OneSuitToAllSuits(maskHighCardFive)
-	return winningCards, maskMakesStraight(maskHighCardFive)
+	// Straight to five
+	const strToFive = ONE_SUIT & (FIVES | FOURS | THREES | TWOS | ACES)
+	winningCards = cards.OneSuitToAllSuits(strToFive)
+	return winningCards, maskMakesStraight(strToFive)
 }
 
 func Flush(cards Card) (winningCards Card, found bool) {
