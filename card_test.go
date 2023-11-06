@@ -305,6 +305,17 @@ func TestStraightFlushTen(t *testing.T) {
 	}
 }
 
+func TestStraightFlushFive(t *testing.T) {
+	c := poker.NewCard
+	cards := c("5h") | c("4h") | c("3h") | c("2h") | c("Ah") | c("Ad")
+
+	want := c("5h") | c("4h") | c("3h") | c("2h") | c("Ah")
+	got, _ := poker.StraightFlush(cards)
+	if want != got {
+		t.Errorf("\nWant %s\nGot  %s", want, got)
+	}
+}
+
 func TestNoRoyalFlush(t *testing.T) {
 	c := poker.NewCard
 	cards := c("Ah") | c("Ad") | c("Qh") | c("3c") | c("Tc")

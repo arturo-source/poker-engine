@@ -276,7 +276,10 @@ func StraightFlush(cards Card) (winningCards Card, found bool) {
 		}
 	}
 
-	return NO_CARD, false
+	const strToFiveMask = (FIVES | FOURS | THREES | TWOS | ACES)
+	cardsMasked := cards & strToFiveMask
+	cardsMasked = cardsMasked.ReduceToOneFlush()
+	return cardsMasked, cardsMasked.Ones() >= 5
 }
 
 func RoyalFlush(cards Card) (winningCards Card, found bool) {
