@@ -66,11 +66,8 @@ func (c Card) MergeSuits() Card {
 	return clubs | diamonds | hearts | spades
 }
 
-// OneSuitToAllSuits expands the maskOneSuited to all suits.
-// Then, executes AND logic with the real card, to delete the cards that are not in the expanded mask.
-func (c Card) OneSuitToAllSuits(maskOneSuited Card) Card {
-	maskExpanded := maskOneSuited | maskOneSuited<<(13*1) | maskOneSuited<<(13*2) | maskOneSuited<<(13*3)
-	return c & maskExpanded
+func (c Card) ExpandToAllSuits() Card {
+	return c | c<<(13*1) | c<<(13*2) | c<<(13*3)
 }
 
 // ValueWithoutSuit returns the first cards of the same suit found.
@@ -196,18 +193,18 @@ func Straight(cards Card) (winningCards Card, found bool) {
 	}
 
 	// Straight to ace -> Straight to six
-	const strToSix Card = 0b11111
+	const strToSix Card = SIXS | FIVES | FOURS | THREES | TWOS
 	const strToAce Card = strToSix << 8
 	for mask := strToAce; mask >= strToSix; mask >>= 1 {
 		if maskMakesStraight(mask) {
-			winningCards = cards.OneSuitToAllSuits(mask)
+			winningCards = cards & mask
 			return winningCards, true
 		}
 	}
 
 	// Straight to five
-	const strToFive = ONE_SUIT & (FIVES | FOURS | THREES | TWOS | ACES)
-	winningCards = cards.OneSuitToAllSuits(strToFive)
+	const strToFive = FIVES | FOURS | THREES | TWOS | ACES
+	winningCards = cards & strToFive
 	return winningCards, maskMakesStraight(strToFive)
 }
 
@@ -276,7 +273,7 @@ func StraightFlush(cards Card) (winningCards Card, found bool) {
 		}
 	}
 
-	const strToFiveMask = (FIVES | FOURS | THREES | TWOS | ACES)
+	const strToFiveMask = FIVES | FOURS | THREES | TWOS | ACES
 	cardsMasked := cards & strToFiveMask
 	cardsMasked = cardsMasked.ReduceToOneFlush()
 	return cardsMasked, cardsMasked.Ones() >= 5
