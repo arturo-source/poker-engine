@@ -84,6 +84,10 @@ func (c Card) ValueWithoutSuit() Card {
 	return 0
 }
 
+func (c Card) QuitCards(cardsToQuit Card) Card {
+	return c &^ cardsToQuit
+}
+
 func JoinCards(cards ...Card) Card {
 	var c Card
 	for _, card := range cards {
@@ -91,10 +95,6 @@ func JoinCards(cards ...Card) Card {
 	}
 
 	return c
-}
-
-func QuitCards(cards Card, cardsToQuit Card) Card {
-	return cards &^ cardsToQuit
 }
 
 func HighCard(cards Card) (winningCards Card, found bool) {
@@ -124,7 +124,7 @@ func TwoPair(cards Card) (winningCards Card, found bool) {
 		return NO_CARD, false
 	}
 
-	cardsWithoutFirstPair := QuitCards(cards, firstPair)
+	cardsWithoutFirstPair := cards.QuitCards(firstPair)
 	secondPair, found := Pair(cardsWithoutFirstPair)
 
 	return firstPair | secondPair, found
@@ -201,7 +201,7 @@ func FullHouse(cards Card) (winningCards Card, found bool) {
 		return NO_CARD, false
 	}
 
-	cardsWithoutThreeOfAKind := QuitCards(cards, threeOfAKind)
+	cardsWithoutThreeOfAKind := cards.QuitCards(threeOfAKind)
 	pair, found := Pair(cardsWithoutThreeOfAKind)
 	return threeOfAKind | pair, found
 }

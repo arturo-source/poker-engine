@@ -179,7 +179,7 @@ func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Card, table
 	// And decide who wins using the rest of the cards
 	restOfTheCards := func(hand Card, winningCards Card) Card {
 		allCards := JoinCards(hand, tableCards)
-		return QuitCards(allCards, winningCards)
+		return allCards.QuitCards(winningCards)
 	}
 
 	p1RestOfTheCards := restOfTheCards(p1.Hand, p1WinningCards)
@@ -258,8 +258,8 @@ func TieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Card, ta
 		return p2
 	}
 
-	p1OnlyPair := QuitCards(p1WinningCards, p1Three)
-	p2OnlyPair := QuitCards(p2WinningCards, p2Three)
+	p1OnlyPair := p1WinningCards.QuitCards(p1Three)
+	p2OnlyPair := p2WinningCards.QuitCards(p2Three)
 	if p1OnlyPair > p2OnlyPair {
 		return p1
 	}

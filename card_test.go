@@ -20,7 +20,7 @@ func TestQuitCards(t *testing.T) {
 	cardsToQuit := c("3d") | c("5d")
 
 	want := c("As") | c("Kc") | c("Ks")
-	got := poker.QuitCards(cards, cardsToQuit)
+	got := cards.QuitCards(cardsToQuit)
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
