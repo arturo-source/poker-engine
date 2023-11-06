@@ -44,10 +44,12 @@ func (c Card) String() string {
 	return cardsStr
 }
 
+// Ones returns the number of bits marked as 1 in Card.
 func (c Card) Ones() int {
 	return bits.OnesCount64(uint64(c))
 }
 
+// ExtractSuits returns the card separated by suit.
 func (c Card) ExtractSuits() (clubs, diamonds, hearts, spades Card) {
 	return c & CLUBS, c & DIAMONDS, c & HEARTS, c & SPADES
 }
@@ -84,6 +86,7 @@ func (c Card) ValueWithoutSuit() Card {
 	return 0
 }
 
+// QuitCards receives cardsToQuit, and return original card without cardsToQuit
 func (c Card) QuitCards(cardsToQuit Card) Card {
 	return c &^ cardsToQuit
 }
