@@ -131,16 +131,16 @@ func (c Card) ReduceToOneFlush() Card {
 	return NO_CARD
 }
 
-// ReduceFlushOnes is usefull when you have one suit and you want only five of the same suit.
+// ReduceFlushLowestNumbers is usefull when you have one suit and you want only five of the same suit.
 // Use only if you are sure (c Card) are only one suit!!
-func (c Card) ReduceFlushOnes() Card {
+func (c Card) ReduceFlushLowestNumbers() Card {
 	const onesToLeft = 5
 
 	for mask := TWOS; mask <= ACES; mask <<= 1 {
-		c = c.QuitCards(mask)
 		if c.Ones() == onesToLeft {
 			return c
 		}
+		c = c.QuitCards(mask)
 	}
 
 	return NO_CARD
@@ -245,12 +245,12 @@ func Flush(cards Card) (winningCards Card, found bool) {
 	for i := range flushes {
 		currVal := flushes[i].ValueWithoutSuit()
 		if currVal > maxVal {
-			currVal = maxVal
+			maxVal = currVal
 			index = i
 		}
 	}
 
-	return flushes[index].ReduceToOneFlush(), true
+	return flushes[index].ReduceFlushLowestNumbers(), true
 }
 
 func FullHouse(cards Card) (winningCards Card, found bool) {

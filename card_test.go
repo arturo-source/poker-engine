@@ -82,12 +82,12 @@ func TestReduceToOneFlush(t *testing.T) {
 	}
 }
 
-func TestReduceFlushOnes(t *testing.T) {
+func TestReduceFlushLowestNumbers(t *testing.T) {
 	c := poker.NewCard
 	cards := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h") | c("8h") | c("7h") | c("6h") | c("5h") | c("4h")
 
 	want := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h")
-	got := cards.ReduceFlushOnes()
+	got := cards.ReduceFlushLowestNumbers()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
@@ -248,6 +248,17 @@ func TestFlushToTen(t *testing.T) {
 	cards := c("2h") | c("Th") | c("9c") | c("8h") | c("7h") | c("6h")
 
 	want := c("2h") | c("Th") | c("8h") | c("7h") | c("6h")
+	got, _ := poker.Flush(cards)
+	if want != got {
+		t.Errorf("\nWant %s\nGot  %s", want, got)
+	}
+}
+
+func TestFlushWithSevenSameColorCards(t *testing.T) {
+	c := poker.NewCard
+	cards := c("2h") | c("Th") | c("9h") | c("8h") | c("7h") | c("6h") | c("Ah")
+
+	want := c("Ah") | c("Th") | c("8h") | c("7h") | c("9h")
 	got, _ := poker.Flush(cards)
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
