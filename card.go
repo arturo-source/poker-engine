@@ -126,7 +126,7 @@ func (c Card) ReduceFlushOnes() Card {
 	const onesToLeft = 5
 
 	for mask := TWOS; mask <= ACES; mask <<= 1 {
-		c = c.QuitCards(TWOS)
+		c = c.QuitCards(mask)
 		if c.Ones() == onesToLeft {
 			return c
 		}

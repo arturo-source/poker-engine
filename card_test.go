@@ -48,6 +48,51 @@ func TestMergeSuits2(t *testing.T) {
 	}
 }
 
+func TestOnes(t *testing.T) {
+	c := poker.NewCard
+	cards := c("Ac") | c("Kh") | c("2c") | c("3s") | c("4d") | c("5d")
+
+	want := 6
+	got := cards.Ones()
+	if want != got {
+		t.Errorf("\nWant %d\nGot  %d", want, got)
+	}
+}
+
+func TestReduceRepeatedNumber(t *testing.T) {
+	c := poker.NewCard
+	cards := c("Kc") | c("Kh") | c("Kd") | c("Ks")
+
+	want := 2
+	cards = cards.ReduceRepeatedNumber(2)
+	got := cards.Ones()
+	if want != got {
+		t.Errorf("\nWant %d\nGot  %d", want, got)
+	}
+}
+
+func TestReduceToOneFlush(t *testing.T) {
+	c := poker.NewCard
+	cards := c("Ah") | c("Kh") | c("Qh") | c("Jh") | c("Th") | c("Ad")
+
+	want := c("Ah") | c("Kh") | c("Qh") | c("Jh") | c("Th")
+	got := cards.ReduceToOneFlush()
+	if want != got {
+		t.Errorf("\nWant %s\nGot  %s", want, got)
+	}
+}
+
+func TestReduceFlushOnes(t *testing.T) {
+	c := poker.NewCard
+	cards := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h") | c("8h") | c("7h") | c("6h") | c("5h") | c("4h")
+
+	want := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h")
+	got := cards.ReduceFlushOnes()
+	if want != got {
+		t.Errorf("\nWant %s\nGot  %s", want, got)
+	}
+}
+
 func TestHighCardAce(t *testing.T) {
 	c := poker.NewCard
 	cards := c("As") | c("Kc")
