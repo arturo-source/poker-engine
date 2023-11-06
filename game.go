@@ -41,7 +41,7 @@ func (g *Game) DealCards() error {
 	for i := 0; i < MAX_CARDS_PER_HAND; i++ {
 		for j := range g.Players {
 			card := g.Deck.GetNextCard()
-			if card != NO_CARD {
+			if card == NO_CARD {
 				return errNoCardsInDeck
 			}
 
