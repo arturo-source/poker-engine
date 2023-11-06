@@ -250,9 +250,7 @@ func StraightFlush(cards Card) (winningCards Card, found bool) {
 }
 
 func RoyalFlush(cards Card) (winningCards Card, found bool) {
-	// Re do from zero to optimize
-	straightFlush, found := StraightFlush(cards)
-	found = found && (straightFlush&ACES) != 0
-
-	return straightFlush, found
+	const royalFlushMask = 0b1111100000000111110000000011111000000001111100000000
+	royalFlush := cards & royalFlushMask
+	return royalFlush, royalFlush.Ones() >= 5
 }
