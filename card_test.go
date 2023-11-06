@@ -221,6 +221,18 @@ func TestStraightToTen(t *testing.T) {
 	}
 }
 
+func TestStraightWithRepeatedCard(t *testing.T) {
+	c := poker.NewCard
+	cards := c("8h") | c("9c") | c("8s") | c("7d") | c("6d") | c("5d")
+
+	want := 5
+	winningCards, _ := poker.Straight(cards)
+	got := winningCards.Ones()
+	if want != got {
+		t.Errorf("\nWant %d\nGot  %d", want, got)
+	}
+}
+
 func TestNoFlush(t *testing.T) {
 	c := poker.NewCard
 	cards := c("Ac") | c("Ad") | c("Qc") | c("Jc") | c("Tc")

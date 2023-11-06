@@ -80,7 +80,7 @@ func (c Card) ValueWithoutSuit() Card {
 		}
 	}
 
-	return 0
+	return NO_CARD
 }
 
 // QuitCards receives cardsToQuit, and return original card without cardsToQuit.
@@ -100,18 +100,32 @@ func (c Card) ReduceRepeatedNumber(onesToLeft int) Card {
 	return c
 }
 
+// ReduceStraightRepeatedNumbers is usefull when you only want one suit of each number.
+func (c Card) ReduceStraightRepeatedNumbers() Card {
+	var newCard = NO_CARD
+
+	for n := ACES; n >= TWOS; n >>= 1 {
+		val := c & n
+		if val.Ones() > 1 {
+			val = val.ReduceRepeatedNumber(1)
+		}
+
+		newCard |= val
+	}
+
+	return newCard
+}
+
 // ReduceToOneFlush is usefull when you only want one suit.
 func (c Card) ReduceToOneFlush() Card {
 	const onesToLeft = 5
-	mask := ONE_SUIT
+	mask := ONE_SUIT << (13 * 3)
 
-	for i := 0; i < 4; i++ {
+	for ; mask > 0; mask >>= 13 {
 		result := c & mask
 		if result.Ones() == onesToLeft {
 			return result
 		}
-
-		mask <<= 13
 	}
 
 	return NO_CARD
@@ -193,19 +207,19 @@ func Straight(cards Card) (winningCards Card, found bool) {
 	}
 
 	// Straight to ace -> Straight to six
-	const strToSix Card = SIXS | FIVES | FOURS | THREES | TWOS
-	const strToAce Card = strToSix << 8
+	const strToSix = SIXS | FIVES | FOURS | THREES | TWOS
+	const strToAce = strToSix << 8
 	for mask := strToAce; mask >= strToSix; mask >>= 1 {
 		if maskMakesStraight(mask) {
 			winningCards = cards & mask
-			return winningCards, true
+			return winningCards.ReduceStraightRepeatedNumbers(), true
 		}
 	}
 
 	// Straight to five
 	const strToFive = FIVES | FOURS | THREES | TWOS | ACES
 	winningCards = cards & strToFive
-	return winningCards, maskMakesStraight(strToFive)
+	return winningCards.ReduceStraightRepeatedNumbers(), maskMakesStraight(strToFive)
 }
 
 func Flush(cards Card) (winningCards Card, found bool) {
