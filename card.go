@@ -54,8 +54,8 @@ func (c Card) ExtractSuits() (clubs, diamonds, hearts, spades Card) {
 	return c & CLUBS, c & DIAMONDS, c & HEARTS, c & SPADES
 }
 
-// AllSuitsToOneSuit joins all cards to one suit.
-func (c Card) AllSuitsToOneSuit() Card {
+// MergeSuits joins all cards to one suit.
+func (c Card) MergeSuits() Card {
 	clubs, diamonds, hearts, spades := c.ExtractSuits()
 
 	// clubs >>= 13 * 0
@@ -173,7 +173,7 @@ func ThreeOfAKind(cards Card) (winningCards Card, found bool) {
 }
 
 func Straight(cards Card) (winningCards Card, found bool) {
-	cardsOneSuited := cards.AllSuitsToOneSuit()
+	cardsOneSuited := cards.MergeSuits()
 	maskMakesStraight := func(mask Card) bool {
 		winningCardsOneSuited := cardsOneSuited & mask
 		return winningCardsOneSuited.Ones() >= 5

@@ -31,7 +31,7 @@ func TestMergeSuits(t *testing.T) {
 	cards := c("As") | c("Kc") | c("Ks") | c("Jd")
 
 	want := poker.Card(0b1101000000000)
-	got := cards.AllSuitsToOneSuit()
+	got := cards.MergeSuits()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
@@ -42,7 +42,7 @@ func TestMergeSuits2(t *testing.T) {
 	cards := c("Ac") | c("Kh") | c("2c") | c("3s") | c("4d") | c("5d")
 
 	want := poker.Card(0b1100000001111)
-	got := cards.AllSuitsToOneSuit()
+	got := cards.MergeSuits()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}

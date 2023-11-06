@@ -144,8 +144,8 @@ func (g *Game) BestHand(p *Player, tableCards Card) (Card, int) {
 }
 
 func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableCards Card) *Player {
-	p1WCOnesuited := p1WinningCards.AllSuitsToOneSuit()
-	p2WCOnesuited := p2WinningCards.AllSuitsToOneSuit()
+	p1WCOnesuited := p1WinningCards.MergeSuits()
+	p2WCOnesuited := p2WinningCards.MergeSuits()
 
 	for n := ACES; n >= TWOS; n >>= 1 {
 		p1Cards := p1WCOnesuited & n
@@ -166,8 +166,8 @@ func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tab
 }
 
 func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableCards Card) *Player {
-	p1WCOnesuited := p1WinningCards.AllSuitsToOneSuit()
-	p2WCOnesuited := p2WinningCards.AllSuitsToOneSuit()
+	p1WCOnesuited := p1WinningCards.MergeSuits()
+	p2WCOnesuited := p2WinningCards.MergeSuits()
 
 	if p1WCOnesuited > p2WCOnesuited {
 		return p1
@@ -224,8 +224,8 @@ func TieBreakerThreeOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Card,
 func TieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableCards Card) *Player {
 	const fiveHighMask = 0b1000000001111
 
-	p1WCOnesuited := p1WinningCards.AllSuitsToOneSuit()
-	p2WCOnesuited := p2WinningCards.AllSuitsToOneSuit()
+	p1WCOnesuited := p1WinningCards.MergeSuits()
+	p2WCOnesuited := p2WinningCards.MergeSuits()
 
 	// Quit Ace as high card, if highest card is really five
 	if (p1WCOnesuited & fiveHighMask) == p1WCOnesuited {
