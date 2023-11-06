@@ -276,8 +276,8 @@ func FourOfAKind(cards Card) (winningCards Card, found bool) {
 }
 
 func StraightFlush(cards Card) (winningCards Card, found bool) {
-	const highestStraightFlushMask Card = 0b0111110000000011111000000001111100000000111110000000
-	const lowestStraightFlushMask Card = 0b0000000011111000000001111100000000111110000000011111
+	const highestStraightFlushMask = KINGS | QUEENS | JACKS | TENS | NINES
+	const lowestStraightFlushMask = SIXS | FIVES | FOURS | THREES | TWOS
 
 	for mask := highestStraightFlushMask; mask >= lowestStraightFlushMask; mask >>= 1 {
 		cardsMasked := cards & mask
@@ -294,7 +294,7 @@ func StraightFlush(cards Card) (winningCards Card, found bool) {
 }
 
 func RoyalFlush(cards Card) (winningCards Card, found bool) {
-	const royalFlushMask Card = 0b1111100000000111110000000011111000000001111100000000
+	const royalFlushMask = ACES | KINGS | QUEENS | JACKS | TENS
 	royalFlush := cards & royalFlushMask
 	royalFlush = royalFlush.ReduceToOneFlush()
 	return royalFlush, royalFlush.Ones() >= 5
