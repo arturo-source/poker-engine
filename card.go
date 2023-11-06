@@ -218,39 +218,21 @@ func FourOfAKind(cards Card) (winningCards Card, found bool) {
 }
 
 func StraightFlush(cards Card) (winningCards Card, found bool) {
-	// Re do from zero to optimize
-	var straights []Card
-	appendStraightIfMatches := func(cards Card) {
-		if straight, found := Straight(cards); found {
-			straights = append(straights, straight)
+	const highestStraightFlushMask Card = 0b0111110000000011111000000001111100000000111110000000
+	const lowestStraightFlushMask Card = 0b0000000011111000000001111100000000111110000000011111
+
+	for mask := highestStraightFlushMask; mask >= lowestStraightFlushMask; mask >>= 1 {
+		cardsMasked := cards & mask
+		if cardsMasked.Ones() >= 5 {
+			return cardsMasked, true
 		}
 	}
 
-	clubs, diamonds, hearts, spades := cards.ExtractSuits()
-	appendStraightIfMatches(clubs)
-	appendStraightIfMatches(diamonds)
-	appendStraightIfMatches(hearts)
-	appendStraightIfMatches(spades)
-
-	if len(straights) == 0 {
-		return NO_CARD, false
-	}
-
-	var index int
-	var maxVal Card = NO_CARD
-	for i := range straights {
-		currVal := straights[i].ValueWithoutSuit()
-		if currVal > maxVal {
-			currVal = maxVal
-			index = i
-		}
-	}
-
-	return straights[index], true
+	return NO_CARD, false
 }
 
 func RoyalFlush(cards Card) (winningCards Card, found bool) {
-	const royalFlushMask = 0b1111100000000111110000000011111000000001111100000000
+	const royalFlushMask Card = 0b1111100000000111110000000011111000000001111100000000
 	royalFlush := cards & royalFlushMask
 	return royalFlush, royalFlush.Ones() >= 5
 }
