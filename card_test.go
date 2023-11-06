@@ -53,7 +53,7 @@ func TestHighCardAce(t *testing.T) {
 	cards := c("As") | c("Kc")
 
 	want := c("As")
-	got := poker.HighCard(cards)
+	got, _ := poker.HighCard(cards)
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
@@ -64,7 +64,7 @@ func TestHighCardSeven(t *testing.T) {
 	cards := c("2s") | c("7c")
 
 	want := c("7c")
-	got := poker.HighCard(cards)
+	got, _ := poker.HighCard(cards)
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}

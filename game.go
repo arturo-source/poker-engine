@@ -66,6 +66,7 @@ var (
 		ThreeOfAKind,
 		TwoPair,
 		Pair,
+		HighCard,
 	}
 	tieBreakerFuncs = []TieBreakerFunc{
 		TieBreakerRoyalFlush,
@@ -77,6 +78,7 @@ var (
 		TieBreakerThreeOfAKind,
 		TieBreakerTwoPair,
 		TieBreakerPair,
+		TieBreakerHighCard,
 	}
 )
 
@@ -124,7 +126,6 @@ func (g *Game) GetWinners() []*Player {
 			}
 		}
 	}
-	// what happens with high card??
 
 	return winners
 }
@@ -142,10 +143,13 @@ func (g *Game) BestHand(p *Player, tableCards Card) (Card, int) {
 	return NO_CARD, len(tieBreakerFuncs)
 }
 
-func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Card) *Player {
+func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableCards Card) *Player {
+	p1WCOnesuited := p1WinningCards.AllSuitsToOneSuit()
+	p2WCOnesuited := p2WinningCards.AllSuitsToOneSuit()
+
 	for n := ACES; n >= TWOS; n >>= 1 {
-		p1Cards := p1WinningCards & n
-		p2Cards := p2WinningCards & n
+		p1Cards := p1WCOnesuited & n
+		p2Cards := p2WCOnesuited & n
 
 		p1Ones := p1Cards.Ones()
 		p2Ones := p2Cards.Ones()

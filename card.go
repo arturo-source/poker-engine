@@ -97,14 +97,14 @@ func QuitCards(cards Card, cardsToQuit Card) Card {
 	return cards &^ cardsToQuit
 }
 
-func HighCard(cards Card) Card {
+func HighCard(cards Card) (winningCards Card, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		val := cards & n
 		if val != NO_CARD {
-			return val
+			return val, true
 		}
 	}
-	return NO_CARD
+	return NO_CARD, false
 }
 
 func Pair(cards Card) (winningCards Card, found bool) {
