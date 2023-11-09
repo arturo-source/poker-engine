@@ -127,6 +127,8 @@ func (g *Game) GetWinners() []*Player {
 		}
 	}
 
+	fmt.Println(smallestIndex)
+
 	return winners
 }
 
