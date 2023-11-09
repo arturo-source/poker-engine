@@ -22,6 +22,48 @@ func TestDealCards(t *testing.T) {
 	}
 }
 
+func TestHighCardTie(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = append(g.Players, p1, p2)
+
+	c := poker.NewCard
+	p1.Hand = c("3h") | c("4h")
+	p2.Hand = c("3d") | c("4c")
+
+	g.Board.TableCards = append(g.Board.TableCards, c("Ad"), c("Kh"), c("Jd"), c("Tc"), c("9h"))
+
+	winners := g.GetWinners()
+	if len(winners) != 2 {
+		t.Errorf("Expected tie, got %d winners", len(winners))
+	}
+}
+
+func TestHighCardWins(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = append(g.Players, p1, p2)
+
+	c := poker.NewCard
+	p1.Hand = c("Ah") | c("4h")
+	p2.Hand = c("3d") | c("4c")
+
+	g.Board.TableCards = append(g.Board.TableCards, c("6d"), c("Kh"), c("Jd"), c("Tc"), c("9h"))
+
+	winners := g.GetWinners()
+	if len(winners) != 1 {
+		t.Errorf("Expected 1 winner, got %d winners", len(winners))
+	}
+
+	want := p1
+	got := winners[0]
+	if want != got {
+		t.Errorf("\nWant %v\nGot  %v", want, got)
+	}
+}
+
 func TestPairTie(t *testing.T) {
 	g := poker.NewGame()
 	p1 := poker.NewPlayer("P1")
