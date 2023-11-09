@@ -273,3 +273,45 @@ func TestFlushWinsPair(t *testing.T) {
 		t.Errorf("\nWant %v\nGot  %v", want, got)
 	}
 }
+
+func TestFullHouseTie(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("9h") | c("8h")
+	p2.Hand = c("8c") | c("9c")
+
+	g.Board.TableCards = []poker.Card{c("8d"), c("Ts"), c("9s"), c("Ah"), c("8s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 2 {
+		t.Errorf("Expected tie, got %d winners", len(winners))
+	}
+}
+
+func TestFullHouseWinsTwoPair(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("Ah") | c("As")
+	p2.Hand = c("Td") | c("9s")
+
+	g.Board.TableCards = []poker.Card{c("6s"), c("Th"), c("9h"), c("Ts"), c("5d")}
+
+	winners := g.GetWinners()
+	if len(winners) != 1 {
+		t.Errorf("Expected 1 winner, got %d", len(winners))
+	}
+
+	want := p2
+	got := winners[0]
+	if want != got {
+		t.Errorf("\nWant %v\nGot  %v", want, got)
+	}
+}

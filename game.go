@@ -253,19 +253,23 @@ func TieBreakerFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableC
 func TieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Card, tableCards Card) *Player {
 	p1Three, _ := ThreeOfAKind(p1WinningCards)
 	p2Three, _ := ThreeOfAKind(p2WinningCards)
-	if p1Three > p2Three {
+	p1ThreeRealValue := p1Three.ValueWithoutSuit()
+	p2ThreeRealValue := p2Three.ValueWithoutSuit()
+	if p1ThreeRealValue > p2ThreeRealValue {
 		return p1
 	}
-	if p2Three > p1Three {
+	if p2ThreeRealValue > p1ThreeRealValue {
 		return p2
 	}
 
-	p1OnlyPair := p1WinningCards.QuitCards(p1Three)
-	p2OnlyPair := p2WinningCards.QuitCards(p2Three)
-	if p1OnlyPair > p2OnlyPair {
+	p1Pair := p1WinningCards.QuitCards(p1Three)
+	p2Pair := p2WinningCards.QuitCards(p2Three)
+	p1PairRealValue := p1Pair.ValueWithoutSuit()
+	p2PairRealValue := p2Pair.ValueWithoutSuit()
+	if p1PairRealValue > p2PairRealValue {
 		return p1
 	}
-	if p2OnlyPair > p1OnlyPair {
+	if p2PairRealValue > p1PairRealValue {
 		return p2
 	}
 
