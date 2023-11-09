@@ -315,3 +315,87 @@ func TestFullHouseWinsTwoPair(t *testing.T) {
 		t.Errorf("\nWant %v\nGot  %v", want, got)
 	}
 }
+
+func TestFourOfAKindTie(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("8d") | c("8h")
+	p2.Hand = c("8c") | c("3c")
+
+	g.Board.TableCards = []poker.Card{c("9c"), c("9d"), c("9s"), c("9h"), c("8s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 2 {
+		t.Errorf("Expected tie, got %d winners", len(winners))
+	}
+}
+
+func TestFourOfAKindWinsThreeOfAKind(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("2h") | c("2s")
+	p2.Hand = c("Kd") | c("Ks")
+
+	g.Board.TableCards = []poker.Card{c("Kc"), c("Tc"), c("9c"), c("2c"), c("2d")}
+
+	winners := g.GetWinners()
+	if len(winners) != 1 {
+		t.Errorf("Expected 1 winner, got %d", len(winners))
+	}
+
+	want := p1
+	got := winners[0]
+	if want != got {
+		t.Errorf("\nWant %v\nGot  %v", want, got)
+	}
+}
+
+func TestStraightFlushTie(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("As") | c("Ks")
+	p2.Hand = c("3c") | c("4c")
+
+	g.Board.TableCards = []poker.Card{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 2 {
+		t.Errorf("Expected tie, got %d winners", len(winners))
+	}
+}
+
+func TestStraightFlushWinsPair(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("As") | c("7s")
+	p2.Hand = c("3c") | c("9c")
+
+	g.Board.TableCards = []poker.Card{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 1 {
+		t.Errorf("Expected 1 winner, got %d", len(winners))
+	}
+
+	want := p1
+	got := winners[0]
+	if want != got {
+		t.Errorf("\nWant %v\nGot  %v", want, got)
+	}
+}
