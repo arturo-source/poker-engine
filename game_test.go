@@ -190,6 +190,48 @@ func TestThreeOfAKindWinsPair(t *testing.T) {
 	}
 }
 
+func TestSraightTie(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("Th") | c("Ah")
+	p2.Hand = c("Td") | c("Ac")
+
+	g.Board.TableCards = []poker.Card{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 2 {
+		t.Errorf("Expected tie, got %d winners", len(winners))
+	}
+}
+
+func TestSraightWinsLowerStraight(t *testing.T) {
+	g := poker.NewGame()
+	p1 := poker.NewPlayer("P1")
+	p2 := poker.NewPlayer("P2")
+	g.Players = []*poker.Player{p1, p2}
+
+	c := poker.NewCard
+	p1.Hand = c("Th") | c("Ah")
+	p2.Hand = c("Td") | c("Qc")
+
+	g.Board.TableCards = []poker.Card{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
+
+	winners := g.GetWinners()
+	if len(winners) != 1 {
+		t.Errorf("Expected 1 winner, got %d", len(winners))
+	}
+
+	want := p2
+	got := winners[0]
+	if want != got {
+		t.Errorf("\nWant %v\nGot  %v", want, got)
+	}
+}
+
 func TestFlushTie(t *testing.T) {
 	g := poker.NewGame()
 	p1 := poker.NewPlayer("P1")
