@@ -74,3 +74,14 @@ var (
 		TWOS:   "2",
 	}
 )
+
+func clamp(v, min, max int) int {
+	if v > max {
+		return max
+	}
+	if v < min {
+		return min
+	}
+
+	return v
+}

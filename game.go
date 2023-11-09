@@ -197,6 +197,8 @@ func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Card, table
 
 		p1Ones := p1Cards.Ones()
 		p2Ones := p2Cards.Ones()
+		p1Ones = clamp(p1Ones, 0, validCardsN)
+		p2Ones = clamp(p2Ones, 0, validCardsN)
 
 		if p1Ones > p2Ones {
 			return p1
