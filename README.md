@@ -6,7 +6,7 @@ Poker engine is a library written in Golang. It can be used to build:
 
 Ensure the library is installed:
 ```bash
-go get -u https://github.com/arturo-source/poker-engine/
+go get -u github.com/arturo-source/poker-engine/
 ```
 
 If you want to know how to use this library, you can see tests. I plan adding some documentation in the future.
