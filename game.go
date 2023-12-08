@@ -144,8 +144,8 @@ func (g *Game) BestHand(p *Player, tableCards Cards) (Cards, int) {
 }
 
 func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	p1WCOnesuited := p1WinningCards.MergeSuits()
-	p2WCOnesuited := p2WinningCards.MergeSuits()
+	p1WCOnesuited := p1WinningCards.mergeSuits()
+	p2WCOnesuited := p2WinningCards.mergeSuits()
 
 	for n := ACES; n >= TWOS; n >>= 1 {
 		p1Cards := p1WCOnesuited & n
@@ -166,8 +166,8 @@ func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 }
 
 func commonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	p1WCOnesuited := p1WinningCards.MergeSuits()
-	p2WCOnesuited := p2WinningCards.MergeSuits()
+	p1WCOnesuited := p1WinningCards.mergeSuits()
+	p2WCOnesuited := p2WinningCards.mergeSuits()
 
 	if p1WCOnesuited > p2WCOnesuited {
 		return p1
@@ -226,8 +226,8 @@ func tieBreakerThreeOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards
 func tieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	const fiveHighMask = 0b1000000001111
 
-	p1WCOnesuited := p1WinningCards.MergeSuits()
-	p2WCOnesuited := p2WinningCards.MergeSuits()
+	p1WCOnesuited := p1WinningCards.mergeSuits()
+	p2WCOnesuited := p2WinningCards.mergeSuits()
 
 	// Quit Ace as high card, if highest card is really five
 	if (p1WCOnesuited & fiveHighMask) == p1WCOnesuited {
@@ -253,8 +253,8 @@ func tieBreakerFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, table
 func tieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1Three, _ := ThreeOfAKind(p1WinningCards)
 	p2Three, _ := ThreeOfAKind(p2WinningCards)
-	p1ThreeRealValue := p1Three.MergeSuits()
-	p2ThreeRealValue := p2Three.MergeSuits()
+	p1ThreeRealValue := p1Three.mergeSuits()
+	p2ThreeRealValue := p2Three.mergeSuits()
 	if p1ThreeRealValue > p2ThreeRealValue {
 		return p1
 	}
@@ -264,8 +264,8 @@ func tieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, t
 
 	p1Pair := p1WinningCards.QuitCards(p1Three)
 	p2Pair := p2WinningCards.QuitCards(p2Three)
-	p1PairRealValue := p1Pair.MergeSuits()
-	p2PairRealValue := p2Pair.MergeSuits()
+	p1PairRealValue := p1Pair.mergeSuits()
+	p2PairRealValue := p2Pair.mergeSuits()
 	if p1PairRealValue > p2PairRealValue {
 		return p1
 	}

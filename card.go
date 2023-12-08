@@ -49,14 +49,14 @@ func (c Cards) Count() int {
 	return bits.OnesCount64(uint64(c))
 }
 
-// ExtractSuits returns the card separated by suit.
-func (c Cards) ExtractSuits() (clubs, diamonds, hearts, spades Cards) {
+// extractSuits returns the card separated by suit.
+func (c Cards) extractSuits() (clubs, diamonds, hearts, spades Cards) {
 	return c & CLUBS, c & DIAMONDS, c & HEARTS, c & SPADES
 }
 
-// MergeSuits joins all cards to one suit.
-func (c Cards) MergeSuits() Cards {
-	clubs, diamonds, hearts, spades := c.ExtractSuits()
+// mergeSuits joins all cards to one suit.
+func (c Cards) mergeSuits() Cards {
+	clubs, diamonds, hearts, spades := c.extractSuits()
 
 	// clubs >>= 13 * 0
 	diamonds >>= 13 * 1
@@ -66,13 +66,14 @@ func (c Cards) MergeSuits() Cards {
 	return clubs | diamonds | hearts | spades
 }
 
-func (c Cards) ExpandToAllSuits() Cards {
+// expandToAllSuits takes Cards onesuited and replicates to all suits
+func (c Cards) expandToAllSuits() Cards {
 	return c | c<<(13*1) | c<<(13*2) | c<<(13*3)
 }
 
-// ValueWithoutSuit returns the first cards of the same suit found.
-// Use only if (c Cards) are all the same suit.
-func (c Cards) ValueWithoutSuit() Cards {
+// valueWithoutSuit returns the first cards of the same suit found.
+// Use only if (c Cards) are all the same suit!!
+func (c Cards) valueWithoutSuit() Cards {
 	for ; c != 0; c >>= 13 {
 		value := c & ONE_SUIT
 		if value != 0 {
@@ -88,8 +89,8 @@ func (c Cards) QuitCards(cardsToQuit Cards) Cards {
 	return c &^ cardsToQuit
 }
 
-// ReduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, Full house) and you want the exact number of ones.
-func (c Cards) ReduceRepeatedNumber(nCardsToLeft int) Cards {
+// reduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, Full house) and you want the exact number of ones.
+func (c Cards) reduceRepeatedNumber(nCardsToLeft int) Cards {
 	mask := ALL_CARDS
 
 	for c.Count() > nCardsToLeft {
@@ -100,14 +101,14 @@ func (c Cards) ReduceRepeatedNumber(nCardsToLeft int) Cards {
 	return c
 }
 
-// ReduceStraightRepeatedNumbers is usefull when you only want one suit of each number.
-func (c Cards) ReduceStraightRepeatedNumbers() Cards {
+// reduceStraightRepeatedNumbers is usefull when you only want one suit of each number.
+func (c Cards) reduceStraightRepeatedNumbers() Cards {
 	var newCard = NO_CARD
 
 	for n := ACES; n >= TWOS; n >>= 1 {
 		val := c & n
 		if val.Count() > 1 {
-			val = val.ReduceRepeatedNumber(1)
+			val = val.reduceRepeatedNumber(1)
 		}
 
 		newCard |= val
@@ -116,8 +117,8 @@ func (c Cards) ReduceStraightRepeatedNumbers() Cards {
 	return newCard
 }
 
-// ReduceToOneFlush is usefull when you only want one suit.
-func (c Cards) ReduceToOneFlush() Cards {
+// reduceToOneFlush is usefull when you only want one suit.
+func (c Cards) reduceToOneFlush() Cards {
 	const nCardsToLeft = 5
 	mask := ONE_SUIT << (13 * 3)
 
@@ -131,9 +132,9 @@ func (c Cards) ReduceToOneFlush() Cards {
 	return NO_CARD
 }
 
-// ReduceFlushLowestNumbers is usefull when you have one suit and you want only five of the same suit.
+// reduceFlushLowestNumbers is usefull when you have one suit and you want only five of the same suit.
 // Use only if you are sure (c Cards) are only one suit!!
-func (c Cards) ReduceFlushLowestNumbers() Cards {
+func (c Cards) reduceFlushLowestNumbers() Cards {
 	const nCardsToLeft = 5
 
 	for mask := TWOS; mask <= ACES; mask <<= 1 {
@@ -169,7 +170,7 @@ func Pair(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		winningCards = cards & n
 		if winningCards.Count() >= 2 {
-			return winningCards.ReduceRepeatedNumber(2), true
+			return winningCards.reduceRepeatedNumber(2), true
 		}
 	}
 
@@ -192,7 +193,7 @@ func ThreeOfAKind(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		winningCards = cards & n
 		if winningCards.Count() >= 3 {
-			return winningCards.ReduceRepeatedNumber(3), true
+			return winningCards.reduceRepeatedNumber(3), true
 		}
 	}
 
@@ -200,7 +201,7 @@ func ThreeOfAKind(cards Cards) (winningCards Cards, found bool) {
 }
 
 func Straight(cards Cards) (winningCards Cards, found bool) {
-	cardsOneSuited := cards.MergeSuits()
+	cardsOneSuited := cards.mergeSuits()
 	maskMakesStraight := func(mask Cards) bool {
 		winningCardsOneSuited := cardsOneSuited & mask
 		return winningCardsOneSuited.Count() == 5
@@ -212,14 +213,14 @@ func Straight(cards Cards) (winningCards Cards, found bool) {
 	for mask := strToAce; mask >= strToSix; mask >>= 1 {
 		if maskMakesStraight(mask) {
 			winningCards = cards & mask
-			return winningCards.ReduceStraightRepeatedNumbers(), true
+			return winningCards.reduceStraightRepeatedNumbers(), true
 		}
 	}
 
 	// Straight to five
 	const strToFive = FIVES | FOURS | THREES | TWOS | ACES
 	winningCards = cards & strToFive
-	return winningCards.ReduceStraightRepeatedNumbers(), maskMakesStraight(strToFive)
+	return winningCards.reduceStraightRepeatedNumbers(), maskMakesStraight(strToFive)
 }
 
 func Flush(cards Cards) (winningCards Cards, found bool) {
@@ -230,7 +231,7 @@ func Flush(cards Cards) (winningCards Cards, found bool) {
 		}
 	}
 
-	clubs, diamonds, hearts, spades := cards.ExtractSuits()
+	clubs, diamonds, hearts, spades := cards.extractSuits()
 	appendFlushIfMatches(clubs)
 	appendFlushIfMatches(diamonds)
 	appendFlushIfMatches(hearts)
@@ -243,14 +244,14 @@ func Flush(cards Cards) (winningCards Cards, found bool) {
 	var index int
 	var maxVal Cards = NO_CARD
 	for i := range flushes {
-		currVal := flushes[i].ValueWithoutSuit()
+		currVal := flushes[i].valueWithoutSuit()
 		if currVal > maxVal {
 			maxVal = currVal
 			index = i
 		}
 	}
 
-	return flushes[index].ReduceFlushLowestNumbers(), true
+	return flushes[index].reduceFlushLowestNumbers(), true
 }
 
 func FullHouse(cards Cards) (winningCards Cards, found bool) {
@@ -281,7 +282,7 @@ func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 
 	for mask := highestStraightFlushMask; mask >= lowestStraightFlushMask; mask >>= 1 {
 		cardsMasked := cards & mask
-		cardsMasked = cardsMasked.ReduceToOneFlush()
+		cardsMasked = cardsMasked.reduceToOneFlush()
 		if cardsMasked.Count() >= 5 {
 			return cardsMasked, true
 		}
@@ -289,13 +290,13 @@ func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 
 	const strToFiveMask = FIVES | FOURS | THREES | TWOS | ACES
 	cardsMasked := cards & strToFiveMask
-	cardsMasked = cardsMasked.ReduceToOneFlush()
+	cardsMasked = cardsMasked.reduceToOneFlush()
 	return cardsMasked, cardsMasked.Count() >= 5
 }
 
 func RoyalFlush(cards Cards) (winningCards Cards, found bool) {
 	const royalFlushMask = ACES | KINGS | QUEENS | JACKS | TENS
 	royalFlush := cards & royalFlushMask
-	royalFlush = royalFlush.ReduceToOneFlush()
+	royalFlush = royalFlush.reduceToOneFlush()
 	return royalFlush, royalFlush.Count() >= 5
 }

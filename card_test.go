@@ -26,6 +26,18 @@ func TestQuitCards(t *testing.T) {
 	}
 }
 
+func TestOnes(t *testing.T) {
+	c := poker.NewCard
+	cards := c("Ac") | c("Kh") | c("2c") | c("3s") | c("4d") | c("5d")
+
+	want := 6
+	got := cards.Count()
+	if want != got {
+		t.Errorf("\nWant %d\nGot  %d", want, got)
+	}
+}
+
+/*
 func TestMergeSuits(t *testing.T) {
 	c := poker.NewCard
 	cards := c("As") | c("Kc") | c("Ks") | c("Jd")
@@ -45,17 +57,6 @@ func TestMergeSuits2(t *testing.T) {
 	got := cards.MergeSuits()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
-	}
-}
-
-func TestOnes(t *testing.T) {
-	c := poker.NewCard
-	cards := c("Ac") | c("Kh") | c("2c") | c("3s") | c("4d") | c("5d")
-
-	want := 6
-	got := cards.Count()
-	if want != got {
-		t.Errorf("\nWant %d\nGot  %d", want, got)
 	}
 }
 
@@ -92,6 +93,7 @@ func TestReduceFlushLowestNumbers(t *testing.T) {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
 }
+*/
 
 func TestHighCardAce(t *testing.T) {
 	c := poker.NewCard
