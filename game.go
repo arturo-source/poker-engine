@@ -52,11 +52,11 @@ func (g *Game) DealCards() error {
 	return nil
 }
 
-type CombinationFunc func(Cards) (Cards, bool)
-type TieBreakerFunc func(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player
+type combinationFunc func(Cards) (Cards, bool)
+type tieBreakerFunc func(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player
 
 var (
-	combinationFuncs = []CombinationFunc{
+	combinationFuncs = []combinationFunc{
 		RoyalFlush,
 		StraightFlush,
 		FourOfAKind,
@@ -68,17 +68,17 @@ var (
 		Pair,
 		HighCard,
 	}
-	tieBreakerFuncs = []TieBreakerFunc{
-		TieBreakerRoyalFlush,
-		TieBreakerStraightFlush,
-		TieBreakerFourOfAKind,
-		TieBreakerFullHouse,
-		TieBreakerFlush,
-		TieBreakerStraight,
-		TieBreakerThreeOfAKind,
-		TieBreakerTwoPair,
-		TieBreakerPair,
-		TieBreakerHighCard,
+	tieBreakerFuncs = []tieBreakerFunc{
+		tieBreakerRoyalFlush,
+		tieBreakerStraightFlush,
+		tieBreakerFourOfAKind,
+		tieBreakerFullHouse,
+		tieBreakerFlush,
+		tieBreakerStraight,
+		tieBreakerThreeOfAKind,
+		tieBreakerTwoPair,
+		tieBreakerPair,
+		tieBreakerHighCard,
 	}
 )
 
@@ -143,7 +143,7 @@ func (g *Game) BestHand(p *Player, tableCards Cards) (Cards, int) {
 	return NO_CARD, len(tieBreakerFuncs)
 }
 
-func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1WCOnesuited := p1WinningCards.MergeSuits()
 	p2WCOnesuited := p2WinningCards.MergeSuits()
 
@@ -165,7 +165,7 @@ func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 	return nil
 }
 
-func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+func commonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1WCOnesuited := p1WinningCards.MergeSuits()
 	p2WCOnesuited := p2WinningCards.MergeSuits()
 
@@ -211,19 +211,19 @@ func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tabl
 	return nil
 }
 
-func TieBreakerPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return CommonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerTwoPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return CommonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerTwoPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerThreeOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return CommonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerThreeOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+func tieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	const fiveHighMask = 0b1000000001111
 
 	p1WCOnesuited := p1WinningCards.MergeSuits()
@@ -246,11 +246,11 @@ func TieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 	return nil
 }
 
-func TieBreakerFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return CommonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+func tieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1Three, _ := ThreeOfAKind(p1WinningCards)
 	p2Three, _ := ThreeOfAKind(p2WinningCards)
 	p1ThreeRealValue := p1Three.MergeSuits()
@@ -276,15 +276,15 @@ func TieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, t
 	return nil
 }
 
-func TieBreakerFourOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return CommonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerFourOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerStraightFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	return TieBreakerStraight(p1, p2, p1WinningCards, p2WinningCards, tableCards)
+func tieBreakerStraightFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+	return tieBreakerStraight(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
-func TieBreakerRoyalFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
+func tieBreakerRoyalFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	// Always tie
 	return nil
 }
