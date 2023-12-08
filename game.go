@@ -151,13 +151,13 @@ func TieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 		p1Cards := p1WCOnesuited & n
 		p2Cards := p2WCOnesuited & n
 
-		p1Ones := p1Cards.Ones()
-		p2Ones := p2Cards.Ones()
+		p1CardsCount := p1Cards.Count()
+		p2CardsCount := p2Cards.Count()
 
-		if p1Ones > p2Ones {
+		if p1CardsCount > p2CardsCount {
 			return p1
 		}
-		if p2Ones > p1Ones {
+		if p2CardsCount > p1CardsCount {
 			return p2
 		}
 	}
@@ -188,24 +188,24 @@ func CommonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tabl
 	// In Poker you only use 5 best card combination to choose the winner
 	// If both have a three of a kind, both can use only the 2 best cards of their rest cards
 	// If both have a flush, its definitely a tie
-	validCardsN := 5 - p1WinningCards.Ones()
+	validCardsN := 5 - p1WinningCards.Count()
 	for n := ACES; n >= TWOS && validCardsN > 0; n >>= 1 {
 		p1Cards := p1RestOfTheCards & n
 		p2Cards := p2RestOfTheCards & n
 
-		p1Ones := p1Cards.Ones()
-		p2Ones := p2Cards.Ones()
-		p1Ones = clamp(p1Ones, 0, validCardsN)
-		p2Ones = clamp(p2Ones, 0, validCardsN)
+		p1CardsCount := p1Cards.Count()
+		p2CardsCount := p2Cards.Count()
+		p1CardsCount = clamp(p1CardsCount, 0, validCardsN)
+		p2CardsCount = clamp(p2CardsCount, 0, validCardsN)
 
-		if p1Ones > p2Ones {
+		if p1CardsCount > p2CardsCount {
 			return p1
 		}
-		if p2Ones > p1Ones {
+		if p2CardsCount > p1CardsCount {
 			return p2
 		}
 
-		validCardsN -= p1Ones
+		validCardsN -= p1CardsCount
 	}
 
 	return nil

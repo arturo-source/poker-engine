@@ -16,7 +16,7 @@ func TestDealCards(t *testing.T) {
 	}
 
 	want := 2
-	got := g.Players[0].Hand.Ones()
+	got := g.Players[0].Hand.Count()
 	if want != got {
 		t.Errorf("\nWant %d\nGot  %d", want, got)
 	}

@@ -53,7 +53,7 @@ func TestOnes(t *testing.T) {
 	cards := c("Ac") | c("Kh") | c("2c") | c("3s") | c("4d") | c("5d")
 
 	want := 6
-	got := cards.Ones()
+	got := cards.Count()
 	if want != got {
 		t.Errorf("\nWant %d\nGot  %d", want, got)
 	}
@@ -65,7 +65,7 @@ func TestReduceRepeatedNumber(t *testing.T) {
 
 	want := 2
 	cards = cards.ReduceRepeatedNumber(2)
-	got := cards.Ones()
+	got := cards.Count()
 	if want != got {
 		t.Errorf("\nWant %d\nGot  %d", want, got)
 	}
@@ -227,7 +227,7 @@ func TestStraightWithRepeatedCard(t *testing.T) {
 
 	want := 5
 	winningCards, _ := poker.Straight(cards)
-	got := winningCards.Ones()
+	got := winningCards.Count()
 	if want != got {
 		t.Errorf("\nWant %d\nGot  %d", want, got)
 	}

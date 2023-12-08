@@ -14,7 +14,7 @@ func NewPlayer(name string) *Player {
 }
 
 func (p *Player) AddCard(card Cards) error {
-	if p.Hand.Ones() >= MAX_CARDS_PER_HAND {
+	if p.Hand.Count() >= MAX_CARDS_PER_HAND {
 		return errMaxCardsInHand
 	}
 	if (p.Hand & card) != 0 {
