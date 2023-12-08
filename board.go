@@ -12,16 +12,16 @@ const (
 
 type Board struct {
 	Deck        *Deck
-	TableCards  []Card
-	BurnedCards []Card
+	TableCards  []Cards
+	BurnedCards []Cards
 	State       BoardState
 }
 
 func NewBoard(d *Deck) *Board {
 	return &Board{
 		Deck:        d,
-		TableCards:  make([]Card, 0, MAX_CARDS_IN_BOARD),
-		BurnedCards: make([]Card, 0, MAX_BURNED_CARDS),
+		TableCards:  make([]Cards, 0, MAX_CARDS_IN_BOARD),
+		BurnedCards: make([]Cards, 0, MAX_BURNED_CARDS),
 		State:       PREFLOP,
 	}
 }

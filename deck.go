@@ -3,16 +3,16 @@ package poker
 import "math/rand"
 
 type Deck struct {
-	Cards   []Card
+	Cards   []Cards
 	pointer int
 }
 
 func NewDeck() *Deck {
 	deck := &Deck{
-		Cards: make([]Card, 0, TOTAL_CARDS),
+		Cards: make([]Cards, 0, TOTAL_CARDS),
 	}
 
-	for card := Card(0b1); card < ACES; card <<= 1 {
+	for card := Cards(0b1); card < ACES; card <<= 1 {
 		deck.Cards = append(deck.Cards, card)
 	}
 
@@ -27,7 +27,7 @@ func (d *Deck) Shuffle() {
 	}
 }
 
-func (d *Deck) GetNextCard() Card {
+func (d *Deck) GetNextCard() Cards {
 	if d.pointer > TOTAL_CARDS {
 		return NO_CARD
 	}

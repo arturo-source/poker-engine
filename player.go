@@ -2,7 +2,7 @@ package poker
 
 type Player struct {
 	Name string
-	Hand Card
+	Hand Cards
 	// HasFolded bool
 }
 
@@ -13,7 +13,7 @@ func NewPlayer(name string) *Player {
 	}
 }
 
-func (p *Player) AddCard(card Card) error {
+func (p *Player) AddCard(card Cards) error {
 	if p.Hand.Ones() >= MAX_CARDS_PER_HAND {
 		return errMaxCardsInHand
 	}

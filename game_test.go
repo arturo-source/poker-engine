@@ -32,7 +32,7 @@ func TestHighCardTie(t *testing.T) {
 	p1.Hand = c("3h") | c("4h")
 	p2.Hand = c("3d") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("Ad"), c("Kh"), c("Jd"), c("Tc"), c("9h")}
+	g.Board.TableCards = []poker.Cards{c("Ad"), c("Kh"), c("Jd"), c("Tc"), c("9h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -50,7 +50,7 @@ func TestHighCardWins(t *testing.T) {
 	p1.Hand = c("Ah") | c("4h")
 	p2.Hand = c("3d") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("6d"), c("Kh"), c("Jd"), c("Tc"), c("9h")}
+	g.Board.TableCards = []poker.Cards{c("6d"), c("Kh"), c("Jd"), c("Tc"), c("9h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -74,7 +74,7 @@ func TestPairTie(t *testing.T) {
 	p1.Hand = c("Ah") | c("Kh")
 	p2.Hand = c("Ad") | c("Kc")
 
-	g.Board.TableCards = []poker.Card{c("Kd"), c("3h"), c("4d"), c("6c"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Kd"), c("3h"), c("4d"), c("6c"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -92,7 +92,7 @@ func TestPairWinsHighCard(t *testing.T) {
 	p1.Hand = c("Ah") | c("Kh")
 	p2.Hand = c("5d") | c("5c")
 
-	g.Board.TableCards = []poker.Card{c("Td"), c("3h"), c("9d"), c("6c"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Td"), c("3h"), c("9d"), c("6c"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -116,7 +116,7 @@ func TestTwoPairTie(t *testing.T) {
 	p1.Hand = c("5h") | c("5s")
 	p2.Hand = c("5d") | c("5c")
 
-	g.Board.TableCards = []poker.Card{c("Ks"), c("3s"), c("3d"), c("6c"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Ks"), c("3s"), c("3d"), c("6c"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -134,7 +134,7 @@ func TestTwoPairWinsHighCard(t *testing.T) {
 	p1.Hand = c("Ah") | c("Kh")
 	p2.Hand = c("5d") | c("6d")
 
-	g.Board.TableCards = []poker.Card{c("Td"), c("5h"), c("9d"), c("6c"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Td"), c("5h"), c("9d"), c("6c"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -158,7 +158,7 @@ func TestThreeOfAKindTie(t *testing.T) {
 	p1.Hand = c("5h") | c("As")
 	p2.Hand = c("5d") | c("Ac")
 
-	g.Board.TableCards = []poker.Card{c("Ks"), c("5s"), c("5c"), c("9c"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Ks"), c("5s"), c("5c"), c("9c"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -176,7 +176,7 @@ func TestThreeOfAKindWinsPair(t *testing.T) {
 	p1.Hand = c("Qd") | c("Qs")
 	p2.Hand = c("Ah") | c("Th")
 
-	g.Board.TableCards = []poker.Card{c("Td"), c("Qh"), c("9s"), c("6s"), c("7h")}
+	g.Board.TableCards = []poker.Cards{c("Td"), c("Qh"), c("9s"), c("6s"), c("7h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -200,7 +200,7 @@ func TestSraightTie(t *testing.T) {
 	p1.Hand = c("Th") | c("Ah")
 	p2.Hand = c("Td") | c("Ac")
 
-	g.Board.TableCards = []poker.Card{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
+	g.Board.TableCards = []poker.Cards{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -218,7 +218,7 @@ func TestSraightWinsLowerStraight(t *testing.T) {
 	p1.Hand = c("Th") | c("Ah")
 	p2.Hand = c("Td") | c("Qc")
 
-	g.Board.TableCards = []poker.Card{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
+	g.Board.TableCards = []poker.Cards{c("Jc"), c("9h"), c("Ks"), c("8s"), c("7s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -242,7 +242,7 @@ func TestFlushTie(t *testing.T) {
 	p1.Hand = c("3h") | c("4h")
 	p2.Hand = c("4d") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("6h"), c("Th"), c("Kh"), c("Ah"), c("5h")}
+	g.Board.TableCards = []poker.Cards{c("6h"), c("Th"), c("Kh"), c("Ah"), c("5h")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -260,7 +260,7 @@ func TestFlushWinsPair(t *testing.T) {
 	p1.Hand = c("3h") | c("4h")
 	p2.Hand = c("4d") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("6h"), c("Th"), c("Kh"), c("Ad"), c("5d")}
+	g.Board.TableCards = []poker.Cards{c("6h"), c("Th"), c("Kh"), c("Ad"), c("5d")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -284,7 +284,7 @@ func TestFullHouseTie(t *testing.T) {
 	p1.Hand = c("9h") | c("8h")
 	p2.Hand = c("8c") | c("9c")
 
-	g.Board.TableCards = []poker.Card{c("8d"), c("Ts"), c("9s"), c("Ah"), c("8s")}
+	g.Board.TableCards = []poker.Cards{c("8d"), c("Ts"), c("9s"), c("Ah"), c("8s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -302,7 +302,7 @@ func TestFullHouseWinsTwoPair(t *testing.T) {
 	p1.Hand = c("Ah") | c("As")
 	p2.Hand = c("Td") | c("9s")
 
-	g.Board.TableCards = []poker.Card{c("6s"), c("Th"), c("9h"), c("Ts"), c("5d")}
+	g.Board.TableCards = []poker.Cards{c("6s"), c("Th"), c("9h"), c("Ts"), c("5d")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -326,7 +326,7 @@ func TestFourOfAKindTie(t *testing.T) {
 	p1.Hand = c("8d") | c("8h")
 	p2.Hand = c("8c") | c("3c")
 
-	g.Board.TableCards = []poker.Card{c("9c"), c("9d"), c("9s"), c("9h"), c("8s")}
+	g.Board.TableCards = []poker.Cards{c("9c"), c("9d"), c("9s"), c("9h"), c("8s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -344,7 +344,7 @@ func TestFourOfAKindWinsThreeOfAKind(t *testing.T) {
 	p1.Hand = c("2h") | c("2s")
 	p2.Hand = c("Kd") | c("Ks")
 
-	g.Board.TableCards = []poker.Card{c("Kc"), c("Tc"), c("9c"), c("2c"), c("2d")}
+	g.Board.TableCards = []poker.Cards{c("Kc"), c("Tc"), c("9c"), c("2c"), c("2d")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -368,7 +368,7 @@ func TestStraightFlushTie(t *testing.T) {
 	p1.Hand = c("As") | c("Ks")
 	p2.Hand = c("3c") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
+	g.Board.TableCards = []poker.Cards{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -386,7 +386,7 @@ func TestStraightFlushWinsPair(t *testing.T) {
 	p1.Hand = c("As") | c("7s")
 	p2.Hand = c("3c") | c("9c")
 
-	g.Board.TableCards = []poker.Card{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
+	g.Board.TableCards = []poker.Cards{c("2s"), c("3s"), c("4s"), c("5s"), c("6s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
@@ -410,7 +410,7 @@ func TestRoyalFlushTie(t *testing.T) {
 	p1.Hand = c("Ac") | c("Kc")
 	p2.Hand = c("3c") | c("4c")
 
-	g.Board.TableCards = []poker.Card{c("Ts"), c("Ks"), c("Js"), c("Qs"), c("As")}
+	g.Board.TableCards = []poker.Cards{c("Ts"), c("Ks"), c("Js"), c("Qs"), c("As")}
 
 	winners := g.GetWinners()
 	if len(winners) != 2 {
@@ -428,7 +428,7 @@ func TestRoyalFlushWinsPair(t *testing.T) {
 	p1.Hand = c("As") | c("7s")
 	p2.Hand = c("3c") | c("9c")
 
-	g.Board.TableCards = []poker.Card{c("Ts"), c("Ks"), c("Js"), c("Qs"), c("9s")}
+	g.Board.TableCards = []poker.Cards{c("Ts"), c("Ks"), c("Js"), c("Qs"), c("9s")}
 
 	winners := g.GetWinners()
 	if len(winners) != 1 {
