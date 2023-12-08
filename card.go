@@ -1,8 +1,6 @@
 package poker
 
-import (
-	"math/bits"
-)
+import "math/bits"
 
 type Cards uint64
 
@@ -44,11 +42,6 @@ func (c Cards) String() string {
 	return cardsStr
 }
 
-// Count returns the number of cards in c.
-func (c Cards) Count() int {
-	return bits.OnesCount64(uint64(c))
-}
-
 // extractSuits returns the card separated by suit.
 func (c Cards) extractSuits() (clubs, diamonds, hearts, spades Cards) {
 	return c & CLUBS, c & DIAMONDS, c & HEARTS, c & SPADES
@@ -82,11 +75,6 @@ func (c Cards) valueWithoutSuit() Cards {
 	}
 
 	return NO_CARD
-}
-
-// QuitCards receives cardsToQuit, and return original card without cardsToQuit.
-func (c Cards) QuitCards(cardsToQuit Cards) Cards {
-	return c &^ cardsToQuit
 }
 
 // reduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, Full house) and you want the exact number of ones.
@@ -145,6 +133,33 @@ func (c Cards) reduceFlushLowestNumbers() Cards {
 	}
 
 	return NO_CARD
+}
+
+// Count returns the number of cards in c.
+func (c Cards) Count() int {
+	return bits.OnesCount64(uint64(c))
+}
+
+// QuitCards receives cardsToQuit, and return original card without cardsToQuit.
+func (c Cards) QuitCards(cardsToQuit Cards) Cards {
+	return c &^ cardsToQuit
+}
+
+func (c Cards) SetBit(pos int) Cards {
+	return c | (1 << pos)
+}
+
+func (c Cards) ClearBit(pos int) Cards {
+	return c &^ (1 << pos)
+}
+
+func (c Cards) BitToggle(pos int) Cards {
+	return c ^ (1 << pos)
+}
+
+func (c Cards) HasBit(pos int) bool {
+	val := c & (1 << pos)
+	return val != 0
 }
 
 func JoinCards(cards ...Cards) Cards {
