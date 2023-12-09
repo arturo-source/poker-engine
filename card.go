@@ -179,9 +179,9 @@ func (c Cards) HasBit(pos int) bool {
 func (c Cards) Split() []Cards {
 	cards := make([]Cards, 0, c.Count())
 
-	for cardNumber := range NUMBER_VALUES {
-		for cardSuit := range SUIT_VALUES {
-			card := c & cardNumber & cardSuit
+	for num := ACES; num >= TWOS; num >>= 1 {
+		for suit := FIRST_SUIT; suit < ALL_CARDS; suit <<= 13 {
+			card := c & num & suit
 			if card != NO_CARD {
 				cards = append(cards, card)
 			}
