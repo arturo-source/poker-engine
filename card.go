@@ -60,9 +60,9 @@ func (c Cards) mergeSuits() Cards {
 }
 
 // expandToAllSuits takes Cards in first suit and replicates to all suits
-func (c Cards) expandToAllSuits() Cards {
-	return c | c<<(13*1) | c<<(13*2) | c<<(13*3)
-}
+// func (c Cards) expandToAllSuits() Cards {
+// 	return c | c<<(13*1) | c<<(13*2) | c<<(13*3)
+// }
 
 // valueWithoutSuit returns the first cards of the same suit found.
 // Use only if your cards are all the same suit!!
@@ -172,6 +172,21 @@ func (c Cards) BitToggle(pos int) Cards {
 func (c Cards) HasBit(pos int) bool {
 	val := c & (1 << pos)
 	return val != 0
+}
+
+func (c Cards) Split() []Cards {
+	cards := make([]Cards, 0, c.Count())
+
+	for cardNumber := range NUMBER_VALUES {
+		for cardSuit := range SUIT_VALUES {
+			card := c & cardNumber & cardSuit
+			if card != NO_CARD {
+				cards = append(cards, card)
+			}
+		}
+	}
+
+	return cards
 }
 
 func JoinCards(cards ...Cards) Cards {
