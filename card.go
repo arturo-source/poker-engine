@@ -47,7 +47,7 @@ func (c Cards) extractSuits() (clubs, diamonds, hearts, spades Cards) {
 	return c & CLUBS, c & DIAMONDS, c & HEARTS, c & SPADES
 }
 
-// mergeSuits joins all cards to one suit.
+// mergeSuits joins all cards to first suit.
 func (c Cards) mergeSuits() Cards {
 	clubs, diamonds, hearts, spades := c.extractSuits()
 
@@ -59,13 +59,13 @@ func (c Cards) mergeSuits() Cards {
 	return clubs | diamonds | hearts | spades
 }
 
-// expandToAllSuits takes Cards onesuited and replicates to all suits
+// expandToAllSuits takes Cards in first suit and replicates to all suits
 func (c Cards) expandToAllSuits() Cards {
 	return c | c<<(13*1) | c<<(13*2) | c<<(13*3)
 }
 
 // valueWithoutSuit returns the first cards of the same suit found.
-// Use only if (c Cards) are all the same suit!!
+// Use only if your cards are all the same suit!!
 func (c Cards) valueWithoutSuit() Cards {
 	for ; c != 0; c >>= 13 {
 		value := c & FIRST_SUIT
@@ -77,7 +77,7 @@ func (c Cards) valueWithoutSuit() Cards {
 	return NO_CARD
 }
 
-// reduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, Full house) and you want the exact number of ones.
+// reduceRepeatedNumber is usefull when you have one number repeated (Pair, Three of a kind, or High Card) and you want the exact number of ones.
 func (c Cards) reduceRepeatedNumber(nCardsToLeft int) Cards {
 	mask := ALL_CARDS
 
@@ -89,8 +89,8 @@ func (c Cards) reduceRepeatedNumber(nCardsToLeft int) Cards {
 	return c
 }
 
-// reduceStraightRepeatedNumbers is usefull when you only want one suit of each number.
-func (c Cards) reduceStraightRepeatedNumbers() Cards {
+// quitStraightRepeatedNumbers is usefull when you only want one suit of each number in your straight.
+func (c Cards) quitStraightRepeatedNumbers() Cards {
 	var newCard = NO_CARD
 
 	for n := ACES; n >= TWOS; n >>= 1 {
@@ -105,8 +105,9 @@ func (c Cards) reduceStraightRepeatedNumbers() Cards {
 	return newCard
 }
 
-// reduceToOneFlush is usefull when you only want one suit.
-func (c Cards) reduceToOneFlush() Cards {
+// getJustOneFlush is usefull when you only want one suit in your flush.
+// Use only if your flush has 5 cards!!
+func (c Cards) getJustOneFlush() Cards {
 	const nCardsToLeft = 5
 	mask := FIRST_SUIT << (13 * 3)
 
@@ -120,9 +121,9 @@ func (c Cards) reduceToOneFlush() Cards {
 	return NO_CARD
 }
 
-// reduceFlushLowestNumbers is usefull when you have one suit and you want only five of the same suit.
-// Use only if you are sure (c Cards) are only one suit!!
-func (c Cards) reduceFlushLowestNumbers() Cards {
+// getFlushHighestNumbers is usefull when you have a flush and you want only the five higher.
+// Use only if you are sure your flush is only one suit!!
+func (c Cards) getFlushHighestNumbers() Cards {
 	const nCardsToLeft = 5
 
 	for mask := TWOS; mask <= ACES; mask <<= 1 {
@@ -175,9 +176,10 @@ func HighCard(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		val := cards & n
 		if val != NO_CARD {
-			return val, true
+			return val.reduceRepeatedNumber(1), true
 		}
 	}
+
 	return NO_CARD, false
 }
 
@@ -228,14 +230,14 @@ func Straight(cards Cards) (winningCards Cards, found bool) {
 	for mask := strToAce; mask >= strToSix; mask >>= 1 {
 		if maskMakesStraight(mask) {
 			winningCards = cards & mask
-			return winningCards.reduceStraightRepeatedNumbers(), true
+			return winningCards.quitStraightRepeatedNumbers(), true
 		}
 	}
 
 	// Straight to five
 	const strToFive = FIVES | FOURS | THREES | TWOS | ACES
 	winningCards = cards & strToFive
-	return winningCards.reduceStraightRepeatedNumbers(), maskMakesStraight(strToFive)
+	return winningCards.quitStraightRepeatedNumbers(), maskMakesStraight(strToFive)
 }
 
 func Flush(cards Cards) (winningCards Cards, found bool) {
@@ -266,7 +268,7 @@ func Flush(cards Cards) (winningCards Cards, found bool) {
 		}
 	}
 
-	return flushes[index].reduceFlushLowestNumbers(), true
+	return flushes[index].getFlushHighestNumbers(), true
 }
 
 func FullHouse(cards Cards) (winningCards Cards, found bool) {
@@ -297,7 +299,7 @@ func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 
 	for mask := highestStraightFlushMask; mask >= lowestStraightFlushMask; mask >>= 1 {
 		cardsMasked := cards & mask
-		cardsMasked = cardsMasked.reduceToOneFlush()
+		cardsMasked = cardsMasked.getJustOneFlush()
 		if cardsMasked.Count() >= 5 {
 			return cardsMasked, true
 		}
@@ -305,13 +307,13 @@ func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 
 	const strToFiveMask = FIVES | FOURS | THREES | TWOS | ACES
 	cardsMasked := cards & strToFiveMask
-	cardsMasked = cardsMasked.reduceToOneFlush()
+	cardsMasked = cardsMasked.getJustOneFlush()
 	return cardsMasked, cardsMasked.Count() >= 5
 }
 
 func RoyalFlush(cards Cards) (winningCards Cards, found bool) {
 	const royalFlushMask = ACES | KINGS | QUEENS | JACKS | TENS
 	royalFlush := cards & royalFlushMask
-	royalFlush = royalFlush.reduceToOneFlush()
+	royalFlush = royalFlush.getJustOneFlush()
 	return royalFlush, royalFlush.Count() >= 5
 }

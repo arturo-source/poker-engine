@@ -69,23 +69,35 @@ func TestReduceRepeatedNumber(t *testing.T) {
 	}
 }
 
-func TestReduceToOneFlush(t *testing.T) {
+func TestQuitStraightRepeatedNumbers(t *testing.T) {
+	c := NewCard
+	cards := c("Kc") | c("Kh") | c("Ad") | c("Qs") | c("Td") | c("Js")
+
+	want := 5
+	cards = cards.quitStraightRepeatedNumbers()
+	got := cards.Count()
+	if want != got {
+		t.Errorf("\nWant %d\nGot  %d", want, got)
+	}
+}
+
+func TestGetJustOneFlush(t *testing.T) {
 	c := NewCard
 	cards := c("Ah") | c("Kh") | c("Qh") | c("Jh") | c("Th") | c("Ad")
 
 	want := c("Ah") | c("Kh") | c("Qh") | c("Jh") | c("Th")
-	got := cards.reduceToOneFlush()
+	got := cards.getJustOneFlush()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
 }
 
-func TestReduceFlushLowestNumbers(t *testing.T) {
+func TestGetFlushHighestNumbers(t *testing.T) {
 	c := NewCard
 	cards := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h") | c("8h") | c("7h") | c("6h") | c("5h") | c("4h")
 
 	want := c("Kh") | c("Qh") | c("Jh") | c("Th") | c("9h")
-	got := cards.reduceFlushLowestNumbers()
+	got := cards.getFlushHighestNumbers()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
 	}
