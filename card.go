@@ -68,7 +68,7 @@ func (c Cards) expandToAllSuits() Cards {
 // Use only if (c Cards) are all the same suit!!
 func (c Cards) valueWithoutSuit() Cards {
 	for ; c != 0; c >>= 13 {
-		value := c & ONE_SUIT
+		value := c & FIRST_SUIT
 		if value != 0 {
 			return value
 		}
@@ -108,7 +108,7 @@ func (c Cards) reduceStraightRepeatedNumbers() Cards {
 // reduceToOneFlush is usefull when you only want one suit.
 func (c Cards) reduceToOneFlush() Cards {
 	const nCardsToLeft = 5
-	mask := ONE_SUIT << (13 * 3)
+	mask := FIRST_SUIT << (13 * 3)
 
 	for ; mask > 0; mask >>= 13 {
 		result := c & mask

@@ -19,7 +19,7 @@ func TestDeckBuilt(t *testing.T) {
 func TestGetOneCardFromDeck(t *testing.T) {
 	d := poker.NewDeck()
 
-	want := poker.Cards(0b1)
+	want := poker.TWOS & poker.FIRST_SUIT
 	got := d.GetNextCard()
 	if want != got {
 		t.Errorf("\nWant %s\nGot  %s", want, got)
@@ -29,7 +29,7 @@ func TestGetOneCardFromDeck(t *testing.T) {
 func TestGetTwoCardsFromDeck(t *testing.T) {
 	d := poker.NewDeck()
 
-	want := poker.Cards(0b10)
+	want := poker.THREES & poker.FIRST_SUIT
 	d.GetNextCard()
 	got := d.GetNextCard()
 	if want != got {
