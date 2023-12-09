@@ -141,9 +141,20 @@ func (c Cards) Count() int {
 	return bits.OnesCount64(uint64(c))
 }
 
-// QuitCards receives cardsToQuit, and return original card without cardsToQuit.
+// AddCards receives cardsToAdd, and returns the original card with cardsToAdd
+func (c Cards) AddCards(cardsToAdd Cards) Cards {
+	return c | cardsToAdd
+}
+
+// QuitCards receives cardsToQuit, and returns the original card without cardsToQuit.
 func (c Cards) QuitCards(cardsToQuit Cards) Cards {
 	return c &^ cardsToQuit
+}
+
+// CardsArePresent returns true if any of cards passed is present
+func (c Cards) CardsArePresent(cards Cards) bool {
+	card := c & cards
+	return card != NO_CARD
 }
 
 func (c Cards) SetBit(pos int) Cards {
