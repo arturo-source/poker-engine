@@ -28,13 +28,15 @@ func NewCard(cardStr string) Cards {
 func (c Cards) String() string {
 	var cardsStr string
 
-	for nkey, nval := range NUMBER_VALUES {
-		if c&nkey != NO_CARD {
-			for skey, sval := range SUIT_VALUES {
-				if c&nkey&skey != NO_CARD {
-					cardsStr += nval + sval
-				}
+	for num := ACES; num >= TWOS; num >>= 1 {
+		for suit := FIRST_SUIT; suit < ALL_CARDS; suit <<= 13 {
+			card := c & num & suit
+			if card != NO_CARD {
+				cardsStr += NUMBER_VALUES[num] + SUIT_VALUES[suit]
 			}
+		}
+
+		if c&num != NO_CARD {
 			cardsStr += " "
 		}
 	}
