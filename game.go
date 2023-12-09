@@ -15,7 +15,8 @@ func Play() {
 	game.Board.NextBoardState() // Turn
 	game.Board.NextBoardState() // River
 
-	winners := game.GetWinners()
+	tableCards := JoinCards(game.Board.TableCards...)
+	winners := GetWinners(tableCards, game.Players)
 	if winners == nil {
 		fmt.Println("It's a tie!")
 	} else {
@@ -55,20 +56,19 @@ func (g *Game) DealCards() error {
 	return nil
 }
 
-func (g *Game) GetWinners() []*Player {
-	type HandValue struct {
-		Player   *Player
-		BestHand Cards
-		HandKind HandKind
-	}
+type PlayerHandValue struct {
+	Player   *Player
+	BestHand Cards
+	HandKind HandKind
+}
 
+// GetWinners returns an array with the players with the best hand (it can be one or more than one)
+func GetWinners(tableCards Cards, players []*Player) []PlayerHandValue {
 	// Get best hand from each player
-	var handValues []HandValue
-	tableCards := JoinCards(g.Board.TableCards...)
-
-	for _, player := range g.Players {
-		pBestHand, handKind := g.BestHand(player, tableCards)
-		handValues = append(handValues, HandValue{
+	handValues := make([]PlayerHandValue, 0, len(players))
+	for _, player := range players {
+		pBestHand, handKind := BestHand(player, tableCards)
+		handValues = append(handValues, PlayerHandValue{
 			Player:   player,
 			BestHand: pBestHand,
 			HandKind: handKind,
@@ -80,34 +80,31 @@ func (g *Game) GetWinners() []*Player {
 		return handValues[i].HandKind > handValues[j].HandKind
 	})
 
-	winners := []*Player{handValues[0].Player}
-	winnerBestHand := handValues[0].BestHand
-	biggestHand := handValues[0].HandKind
+	bestHandValues := []PlayerHandValue{
+		{handValues[0].Player, handValues[0].BestHand, handValues[0].HandKind},
+	}
 
 	// Solve ties
 	for _, opponent := range handValues[1:] {
-		if opponent.HandKind != biggestHand {
+		best := bestHandValues[0]
+		if opponent.HandKind != best.HandKind {
 			break
 		}
 
-		currWinner := winners[0]
-		winner := tieBreakerFuncs[biggestHand](currWinner, opponent.Player, winnerBestHand, opponent.BestHand, tableCards)
-
-		if winner == nil { // tie
-			winners = append(winners, opponent.Player)
-		}
-
-		if winner == opponent.Player {
-			winners = []*Player{opponent.Player}
-			biggestHand = opponent.HandKind
-			winnerBestHand = opponent.BestHand
+		winner := tieBreakerFuncs[best.HandKind](best.Player, opponent.Player, best.BestHand, opponent.BestHand, tableCards)
+		switch winner {
+		case nil: // tie
+			bestHandValues = append(bestHandValues, PlayerHandValue{opponent.Player, opponent.BestHand, opponent.HandKind})
+		case opponent.Player: // new best
+			bestHandValues = []PlayerHandValue{{opponent.Player, opponent.BestHand, opponent.HandKind}}
 		}
 	}
 
-	return winners
+	return bestHandValues
 }
 
-func (g *Game) BestHand(p *Player, tableCards Cards) (Cards, HandKind) {
+// BestHand calculates the best combination of cards and what kind of hand it is
+func BestHand(p *Player, tableCards Cards) (Cards, HandKind) {
 	pCards := JoinCards(p.Hand, tableCards)
 
 	// sort hand kinds because map[] is not sorted
@@ -126,7 +123,7 @@ func (g *Game) BestHand(p *Player, tableCards Cards) (Cards, HandKind) {
 		}
 	}
 
-	return NO_CARD, HIGHCARD
+	return NO_CARD, -1
 }
 
 func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {

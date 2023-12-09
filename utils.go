@@ -79,6 +79,27 @@ type combinationFunc func(Cards) (Cards, bool)
 type tieBreakerFunc func(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player
 type HandKind int
 
+func (hk HandKind) String() string {
+	names := [...]string{
+		"High card",
+		"Pair",
+		"Two pair",
+		"Three of a kind",
+		"Straight",
+		"Flush",
+		"Full house",
+		"Four of a kind",
+		"Straight flush",
+		"Royal flush",
+	}
+
+	if hk < HIGHCARD || hk > ROYALFLUSH {
+		return "Unknown HandKind"
+	}
+
+	return names[hk]
+}
+
 const (
 	HIGHCARD HandKind = iota
 	PAIR
