@@ -75,6 +75,50 @@ var (
 	}
 )
 
+type combinationFunc func(Cards) (Cards, bool)
+type tieBreakerFunc func(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player
+type HandKind int
+
+const (
+	HIGHCARD HandKind = iota
+	PAIR
+	TWOPAIR
+	THREEOFAKIND
+	STRAIGHT
+	FLUSH
+	FULLHOUSE
+	FOUROFAKIND
+	STRAIGHTFLUSH
+	ROYALFLUSH
+)
+
+var (
+	combinationFuncs = map[HandKind]combinationFunc{
+		ROYALFLUSH:    RoyalFlush,
+		STRAIGHTFLUSH: StraightFlush,
+		FOUROFAKIND:   FourOfAKind,
+		FULLHOUSE:     FullHouse,
+		FLUSH:         Flush,
+		STRAIGHT:      Straight,
+		THREEOFAKIND:  ThreeOfAKind,
+		TWOPAIR:       TwoPair,
+		PAIR:          Pair,
+		HIGHCARD:      HighCard,
+	}
+	tieBreakerFuncs = map[HandKind]tieBreakerFunc{
+		ROYALFLUSH:    tieBreakerRoyalFlush,
+		STRAIGHTFLUSH: tieBreakerStraightFlush,
+		FOUROFAKIND:   tieBreakerFourOfAKind,
+		FULLHOUSE:     tieBreakerFullHouse,
+		FLUSH:         tieBreakerFlush,
+		STRAIGHT:      tieBreakerStraight,
+		THREEOFAKIND:  tieBreakerThreeOfAKind,
+		TWOPAIR:       tieBreakerTwoPair,
+		PAIR:          tieBreakerPair,
+		HIGHCARD:      tieBreakerHighCard,
+	}
+)
+
 func clamp(v, min, max int) int {
 	if v > max {
 		return max
