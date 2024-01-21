@@ -2,7 +2,7 @@
 Poker engine is a library written in Golang. It can be used to build:
 - A game REST API using the Go HTTP standard library.
 - An AI that learns using Reinforcement Learning.
-- A poker-odds application (my next project).
+- A poker-odds application ([CLI example](https://github.com/arturo-source/poker-odds)).
 
 Ensure the library is installed:
 ```bash
