@@ -2,8 +2,16 @@ package poker
 
 import "math/bits"
 
+// Cards represents a set of cards joined into an uint64
+// where each bit represent one card from the deck.
+// From the 0 to 12 one suit, 13 to 25 other one, etc.
 type Cards uint64
 
+// NewCard reads the string and returns the card, only if string has valid number and suit.
+//
+// Valid numbers are A K Q J T 9 8 7 6 5 4 3 2.
+//
+// Valid suits are s c h d.
 func NewCard(cardStr string) Cards {
 	var numCard, suitCard Cards
 	number, suit := string(cardStr[0]), string(cardStr[1])
@@ -25,6 +33,7 @@ func NewCard(cardStr string) Cards {
 	return numCard & suitCard
 }
 
+// String transforms the set of cards in `Cards` into a readable string.
 func (c Cards) String() string {
 	var cardsStr string
 
@@ -143,7 +152,7 @@ func (c Cards) Count() int {
 	return bits.OnesCount64(uint64(c))
 }
 
-// AddCards receives cardsToAdd, and returns the original card with cardsToAdd
+// AddCards receives cardsToAdd, and returns the original card with cardsToAdd.
 func (c Cards) AddCards(cardsToAdd Cards) Cards {
 	return c | cardsToAdd
 }
@@ -153,29 +162,42 @@ func (c Cards) QuitCards(cardsToQuit Cards) Cards {
 	return c &^ cardsToQuit
 }
 
-// CardsArePresent returns true if any of cards passed is present
+// CardsArePresent returns true if any of cards passed is present.
 func (c Cards) CardsArePresent(cards Cards) bool {
 	card := c & cards
 	return card != NO_CARD
 }
 
+// SetBit sets the bit in that position.
+//
+// Warning!! Use only if you know how the `Cards uint64` is built.
 func (c Cards) SetBit(pos int) Cards {
 	return c | (1 << pos)
 }
 
+// ClearBit clears the bit in that position.
+//
+// Warning!! Use only if you know how the `Cards uint64` is built.
 func (c Cards) ClearBit(pos int) Cards {
 	return c &^ (1 << pos)
 }
 
+// BitToggle toggles the bit in that position.
+//
+// Warning!! Use only if you know how the `Cards uint64` is built.
 func (c Cards) BitToggle(pos int) Cards {
 	return c ^ (1 << pos)
 }
 
+// HasBit returns true if there is a bit marked as 1 in that position.
+//
+// Warning!! Use only if you know how the `Cards uint64` is built.
 func (c Cards) HasBit(pos int) bool {
 	val := c & (1 << pos)
 	return val != 0
 }
 
+// Split divides the set of cards in `Cards`, and returns an array with each one separated.
 func (c Cards) Split() []Cards {
 	cards := make([]Cards, 0, c.Count())
 
@@ -191,6 +213,7 @@ func (c Cards) Split() []Cards {
 	return cards
 }
 
+// JoinCards gets a set of cards and joins them into `Cards`.
 func JoinCards(cards ...Cards) Cards {
 	var c Cards
 	for _, card := range cards {
@@ -200,6 +223,9 @@ func JoinCards(cards ...Cards) Cards {
 	return c
 }
 
+// HighCard receives a set of cards,
+// if it is possible to find a HighCard combination, returns the best combination and true,
+// in another case, random cards, and false.
 func HighCard(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		val := cards & n
@@ -211,6 +237,9 @@ func HighCard(cards Cards) (winningCards Cards, found bool) {
 	return NO_CARD, false
 }
 
+// Pair receives a set of cards,
+// if it is possible to find a Pair combination, returns the best combination and true,
+// in another case, random cards, and false.
 func Pair(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		winningCards = cards & n
@@ -222,6 +251,9 @@ func Pair(cards Cards) (winningCards Cards, found bool) {
 	return NO_CARD, false
 }
 
+// TwoPair receives a set of cards,
+// if it is possible to find a TwoPair combination, returns the best combination and true,
+// in another case, random cards, and false.
 func TwoPair(cards Cards) (winningCards Cards, found bool) {
 	firstPair, found := Pair(cards)
 	if !found {
@@ -234,6 +266,9 @@ func TwoPair(cards Cards) (winningCards Cards, found bool) {
 	return firstPair | secondPair, found
 }
 
+// ThreeOfAKind receives a set of cards,
+// if it is possible to find a ThreeOfAKind combination, returns the best combination and true,
+// in another case, random cards, and false.
 func ThreeOfAKind(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		winningCards = cards & n
@@ -245,6 +280,9 @@ func ThreeOfAKind(cards Cards) (winningCards Cards, found bool) {
 	return NO_CARD, false
 }
 
+// Straight receives a set of cards,
+// if it is possible to find a Straight combination, returns the best combination and true,
+// in another case, random cards, and false.
 func Straight(cards Cards) (winningCards Cards, found bool) {
 	cardsOneSuited := cards.mergeSuits()
 	maskMakesStraight := func(mask Cards) bool {
@@ -268,6 +306,9 @@ func Straight(cards Cards) (winningCards Cards, found bool) {
 	return winningCards.quitStraightRepeatedNumbers(), maskMakesStraight(strToFive)
 }
 
+// Flush receives a set of cards,
+// if it is possible to find a Flush combination, returns the best combination and true,
+// in another case, random cards, and false.
 func Flush(cards Cards) (winningCards Cards, found bool) {
 	var flushes []Cards
 	appendFlushIfMatches := func(cards Cards) {
@@ -299,6 +340,9 @@ func Flush(cards Cards) (winningCards Cards, found bool) {
 	return flushes[index].getFlushHighestNumbers(), true
 }
 
+// FullHouse receives a set of cards,
+// if it is possible to find a FullHouse combination, returns the best combination and true,
+// in another case, random cards, and false.
 func FullHouse(cards Cards) (winningCards Cards, found bool) {
 	threeOfAKind, found := ThreeOfAKind(cards)
 	if !found {
@@ -310,6 +354,9 @@ func FullHouse(cards Cards) (winningCards Cards, found bool) {
 	return threeOfAKind | pair, found
 }
 
+// FourOfAKind receives a set of cards,
+// if it is possible to find a FourOfAKind combination, returns the best combination and true,
+// in another case, random cards, and false.
 func FourOfAKind(cards Cards) (winningCards Cards, found bool) {
 	for n := ACES; n >= TWOS; n >>= 1 {
 		winningCards = cards & n
@@ -321,6 +368,9 @@ func FourOfAKind(cards Cards) (winningCards Cards, found bool) {
 	return NO_CARD, false
 }
 
+// StraightFlush receives a set of cards,
+// if it is possible to find a StraightFlush combination, returns the best combination and true,
+// in another case, random cards, and false.
 func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 	const highestStraightFlushMask = KINGS | QUEENS | JACKS | TENS | NINES
 	const lowestStraightFlushMask = SIXS | FIVES | FOURS | THREES | TWOS
@@ -339,6 +389,9 @@ func StraightFlush(cards Cards) (winningCards Cards, found bool) {
 	return cardsMasked, cardsMasked.Count() >= 5
 }
 
+// RoyalFlush receives a set of cards,
+// if it is possible to find a RoyalFlush combination, returns the best combination and true,
+// in another case, random cards, and false.
 func RoyalFlush(cards Cards) (winningCards Cards, found bool) {
 	const royalFlushMask = ACES | KINGS | QUEENS | JACKS | TENS
 	royalFlush := cards & royalFlushMask
