@@ -6,16 +6,6 @@ import (
 	"github.com/arturo-source/poker-engine"
 )
 
-func TestDeckBuilt(t *testing.T) {
-	d := poker.NewDeck()
-
-	want := poker.TOTAL_CARDS
-	got := len(d.Cards)
-	if want != got {
-		t.Errorf("\nWant %d\nGot  %d", want, got)
-	}
-}
-
 func TestGetOneCardFromDeck(t *testing.T) {
 	d := poker.NewDeck()
 

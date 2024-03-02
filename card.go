@@ -12,6 +12,8 @@ type Cards uint64
 // Valid numbers are A K Q J T 9 8 7 6 5 4 3 2.
 //
 // Valid suits are s c h d.
+//
+// An example of card in string is "Ah".
 func NewCard(cardStr string) Cards {
 	var numCard, suitCard Cards
 	number, suit := string(cardStr[0]), string(cardStr[1])
