@@ -45,6 +45,15 @@ func TestBoardState(t *testing.T) {
 	if want != *got {
 		t.Errorf("\nWant %v\nGot  %v", want, *got)
 	}
+
+	want = poker.SHOWDOWN
+	err = b.NextBoardState()
+	if err != nil {
+		t.Errorf("Got an error flipping cards: %s", err)
+	}
+	if want != *got {
+		t.Errorf("\nWant %v\nGot  %v", want, *got)
+	}
 }
 
 func TestBoardCardsInFlop(t *testing.T) {
