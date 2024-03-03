@@ -5,7 +5,8 @@ import (
 	"sort"
 )
 
-func Play() {
+// play is just an example of how to use Game
+func play() {
 	game := NewGame()
 
 	game.Deck.Shuffle()
@@ -24,12 +25,14 @@ func Play() {
 	}
 }
 
+// Game represents a game state which has: many players, a board, and a deck.
 type Game struct {
 	Players []*Player
 	Board   *Board
 	Deck    *Deck
 }
 
+// NewGame is an easy way to init a Game with default values.
 func NewGame() *Game {
 	d := NewDeck()
 	b := NewBoard(d)
@@ -41,6 +44,7 @@ func NewGame() *Game {
 	}
 }
 
+// DealCards deals one card per each player, and deals another one for each one again.
 func (g *Game) DealCards() error {
 	for i := 0; i < MAX_CARDS_PER_HAND; i++ {
 		for j := range g.Players {
@@ -56,6 +60,7 @@ func (g *Game) DealCards() error {
 	return nil
 }
 
+// PlayerHandValue is a structure to represent what is the best hand the player can have, and which kind of hand is (HIGHCARD, PAIR, etc.).
 type PlayerHandValue struct {
 	Player   *Player
 	BestHand Cards
@@ -126,6 +131,7 @@ func BestHand(p *Player, tableCards Cards) (Cards, HandKind) {
 	return NO_CARD, -1
 }
 
+// tieBreakerHighCard returns the player which has the highest card.
 func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1WCOnesuited := p1WinningCards.mergeSuits()
 	p2WCOnesuited := p2WinningCards.mergeSuits()
@@ -148,6 +154,16 @@ func tieBreakerHighCard(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 	return nil
 }
 
+// commonTieBreaker returns the player with best hand in the common cases.
+// It suposes both players have the same kind of hand. It follows the next rules:
+//
+// 1. The player with highest cards in the winning cards (the pair, three of a kind, or whatever) wins.
+//
+// 2. If both have the same winning cards value, quit them from the hand.
+//
+// 3. Count missing cards until 5 (5 is the maximum cards to do a valid combination).
+//
+// 4. Check if one of them has more highest cards (more Aces, more Kings, etc.).
 func commonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1WCOnesuited := p1WinningCards.mergeSuits()
 	p2WCOnesuited := p2WinningCards.mergeSuits()
@@ -194,25 +210,30 @@ func commonTieBreaker(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tabl
 	return nil
 }
 
+// tieBreakerPair follows commonTieBreaker logic.
 func tieBreakerPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerTwoPair follows commonTieBreaker logic.
 func tieBreakerTwoPair(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerThreeOfAKind follows commonTieBreaker logic.
 func tieBreakerThreeOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerStraight returns the winning player depending on the biggest winning cards (in the lowest straight A 5 4 3 2, highest is 5),
+// if card numbers are the same, is a tie.
 func tieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	const fiveHighMask = 0b1000000001111
 
 	p1WCOnesuited := p1WinningCards.mergeSuits()
 	p2WCOnesuited := p2WinningCards.mergeSuits()
 
-	// Quit Ace as high card, if highest card is really five
+	// Quit Ace as high card, highest card is really five in the lowest straight
 	if (p1WCOnesuited & fiveHighMask) == p1WCOnesuited {
 		p1WCOnesuited &= 0b1111
 	}
@@ -229,10 +250,14 @@ func tieBreakerStraight(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, ta
 	return nil
 }
 
+// tieBreakerFlush follows commonTieBreaker logic.
 func tieBreakerFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerFullHouse returns the winning player depending on the biggest ThreeOfAKind,
+// if it is the same, the biggest Pair,
+// any other case is a tie.
 func tieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	p1Three, _ := ThreeOfAKind(p1WinningCards)
 	p2Three, _ := ThreeOfAKind(p2WinningCards)
@@ -259,15 +284,17 @@ func tieBreakerFullHouse(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, t
 	return nil
 }
 
+// tieBreakerFourOfAKind follows commonTieBreaker logic.
 func tieBreakerFourOfAKind(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return commonTieBreaker(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerStraightFlush follows tieBreakerStraight logic.
 func tieBreakerStraightFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
 	return tieBreakerStraight(p1, p2, p1WinningCards, p2WinningCards, tableCards)
 }
 
+// tieBreakerRoyalFlush is always a tie.
 func tieBreakerRoyalFlush(p1, p2 *Player, p1WinningCards, p2WinningCards Cards, tableCards Cards) *Player {
-	// Always tie
 	return nil
 }
