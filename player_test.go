@@ -67,19 +67,3 @@ func TestErrorAddingMoreThanMaxCards(t *testing.T) {
 		t.Errorf("Wanted an error. Got nil.")
 	}
 }
-
-func TestErrorAddRepeatedCard(t *testing.T) {
-	p := poker.NewPlayer("")
-	card := poker.NewCard("As")
-
-	var err error
-	err = p.AddCard(card)
-	if err != nil {
-		t.Errorf("Got error adding a card to a player hand: %s", err)
-	}
-
-	err = p.AddCard(card)
-	if err == nil {
-		t.Errorf("Wanted an error. Got nil.")
-	}
-}

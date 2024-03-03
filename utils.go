@@ -3,10 +3,9 @@ package poker
 import "errors"
 
 var (
-	errNoCardsInDeck     = errors.New("no more cards in deck")
-	errNoCardsToFlip     = errors.New("no more cards to flip")
-	errMaxCardsInHand    = errors.New("max cards added to hand")
-	errCardAlreadyInHand = errors.New("card already added to hand")
+	errNoCardsInDeck  = errors.New("no more cards in deck")
+	errNoCardsToFlip  = errors.New("no more cards to flip")
+	errMaxCardsInHand = errors.New("max cards added to hand")
 )
 
 const (
